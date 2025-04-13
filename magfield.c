@@ -4,16 +4,18 @@
 #include <fcntl.h>
 #include <linux/i2c-dev.h>
 
-#define QMC5883L_ADDRESS 0x0D
-#define CONTROL_REG1 0x09 // operational modes (MODE). output data update rate (ODR), magnetic field measurement range or sensitivity of the sensors (RNG) and over sampling rate (OSR)
+#define QMC5883L_ADDRESS 0x0D // Default I2C address
+#define CONTROL_REG1 0x09 // operational modes (MODE), output data update rate (ODR), magnetic field measurement range or sensitivity of the sensors (RNG) and over sampling rate (OSR)
 #define CONTROL_REG2 0x0A // Interrupt Pin enabling (INT_ENB), Point roll over function enabling(POL_PNT) and soft reset (SOFT_RST)
-#define X_LSB 0x00 // read magnetic field values 
+
+// Data Registers
+#define X_LSB 0x00
 #define X_MSB 0x01
 #define Y_LSB 0x02
 #define Y_MSB 0x03
 #define Z_LSB 0x04
 #define Z_MSB 0x05
-#define STATUS_REGISTER 0x06
+
 #define SET_RESET_PERIOD_REGISTER 0x0b // recommended as per datasheet
 
 void writeRegister(int file, unsigned char reg, unsigned char value)
@@ -23,6 +25,7 @@ void writeRegister(int file, unsigned char reg, unsigned char value)
 }
 
 
+// Get magnetic field (X, Y, Z) values from sensor
 void readMagneticField(int file, __int16_t *x, __int16_t *y, __int16_t *z)
 {
     unsigned char x_lsb[1];
@@ -42,19 +45,7 @@ void readMagneticField(int file, __int16_t *x, __int16_t *y, __int16_t *z)
 
     unsigned char z_msb[1];
     z_msb[0] = Z_MSB;
-    // unsigned char status_buf[6];
-
-    // Read from STATUS_REGISTER to ensure we're ready
-    // write(file,  1);
-    // read(file, status_buf, 6);
-    // if (status_buf[0]) // 0x06[0] = 1 means ready
-    // {
-        // write(file, DATA_REGISTER, 1); // now read from data reg
-        
-        // read(file, x_lsb, 2);
-
-    // }
-
+    
     write(file, x_lsb, 1);
     read(file, x_lsb, 1);
 
@@ -73,6 +64,7 @@ void readMagneticField(int file, __int16_t *x, __int16_t *y, __int16_t *z)
     write(file, z_msb, 1);
     read(file, z_msb, 1);
 
+    // store obtained values
     *x = (__int16_t)((x_msb[0] << 8) | x_lsb[0]); // shift high byte left by 8b then cat with low byte
     *y = (__int16_t)((y_msb[0] << 8) | y_lsb[0]);
     *z = (__int16_t)((z_msb[0] << 8) | z_lsb[0]);
