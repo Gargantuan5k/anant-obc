@@ -36,7 +36,6 @@
 ## Loopback Wiring (Physical Setup)
 
 To perform the loopback, connect the SPI pins as follows:
-> Don't forget `sudo`!
 
 |BBB Pin|Connect To|Description|
 |---|---|---|
@@ -49,6 +48,7 @@ To perform the loopback, connect the SPI pins as follows:
 ## Pin configuration
 
 We need to set pin modes of the P9 connector to spi. Use the following table and commands:
+> Don't forget `sudo`!
 
 |PinMUX|Mode|Command|
 |---|---|---|
