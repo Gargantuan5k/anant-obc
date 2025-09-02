@@ -3,9 +3,9 @@
 
 ---
 
-## 📌 Features
+## Features
 
-- SPI communication using Linux’s `/dev/spidev` interface
+- SPI communication using Linux’s `/dev/spidev1.0` interface
     
 - Configures SPI mode, clock speed, and bits per word
     
@@ -16,36 +16,48 @@
 
 ---
 
-## 🧰 Prerequisites
+## Prerequisites
 
-- BeagleBone Black
+- BeagleBone Black (Tested running `Debian 6.3.0-18+deb9u1`)
     
 - SPI interface enabled (spidev1.0)
     
-- Loopback wire connecting **MOSI** to **MISO**
+- Loopback wire connecting pins as described
+
+- Pin configuration using `config-pin`
     
-- GCC compiler
+- GCC compiler (tested using `gcc (Debian 6.3.0-18) 6.3.0 20170516`)
     
 - SPI dev headers (`linux/spi/spidev.h`)
     
 
 ---
 
-## 🔌 Loopback Wiring (Physical Setup)
+## Loopback Wiring (Physical Setup)
 
-To perform a **hardware loopback**, connect the SPI pins as follows:
+To perform the loopback, connect the SPI pins as follows:
+> Don't forget `sudo`!
 
-|BBB Pin|Function|Connect To|
+|BBB Pin|Connect To|Description|
 |---|---|---|
-|P9_30|MOSI|MISO (P9_29)|
-|P9_29|MISO|MOSI (P9_30)|
-|P9_31|SCLK|(Unchanged)|
-|P9_28|CS0|(Used by spidev1.0)|
-|GND|GND|GND|
+|P9_18|P9_21|`spi0_d1` to `spi0_d0`|
+
+[Reference BeagleBone Connectors Documentation](https://docs.beagleboard.org/boards/beaglebone/black/ch07.html#connector-p9)
 
 ---
 
-## 🧾 Code Breakdown
+## Pin configuration
+
+We need to set pin modes of the P9 connector to spi. Use the following table and commands:
+
+|PinMUX|Mode|Command|
+|---|---|---|
+|P9_17|`spi`|`sudo config-pin P9_17 spi`|
+|P9_18|`spi`|`sudo config-pin P9_18 spi`|
+|P9_21|`spi`|`sudo config-pin P9_21 spi`|
+|P9_22|`spi`|`sudo config-pin P9_22 spi`|
+
+## Code Breakdown
 
 ### 1. **Includes and Definitions**
 
@@ -157,7 +169,9 @@ printf("Final contents of rx buffer: %d\n", rx[0]);
 
 ---
 
-## 🛠 Build Instructions
+## Build Instructions
+
+**REMEMBER** to first use `config-pin` as described before, AND connect the correct pins together.
 
 ```bash
 gcc -o bbb_spi bbb_spi.c
@@ -165,7 +179,7 @@ gcc -o bbb_spi bbb_spi.c
 
 ---
 
-## 🚀 Run the Program
+## Run the Program
 
 ```bash
 sudo ./bbb_spi
@@ -175,7 +189,7 @@ sudo ./bbb_spi
 
 ---
 
-## 📤 Sample Output
+## Sample Output
 
 ```
 SPI Loopback with data: 69
