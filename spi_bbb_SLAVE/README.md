@@ -39,4 +39,8 @@ and check pins 84-87, you should see something like "slave"
 
 Also, check kernel logs and pipe it to `grep "spi|pinctrl|pinmux|slave"`. 
 
+## Extra resources and stuff that I found
+[Introduction to the BBB Device Tree](https://cdn-learn.adafruit.com/downloads/pdf/introduction-to-the-beaglebone-black-device-tree.pdf)
+[Reference on pinmux IDs and shit - bonescript pin reference](https://github.com/jadonk/bonescript/blob/master/src/bone.js)
+[Examples on using pinctrl-single](https://www.kernel.org/doc/Documentation/devicetree/bindings/pinctrl/pinctrl-single.txt)
 
